@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misi Magang - WriteYuk Community</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* --- CSS KHUSUS CHECKLIST (ACCORDION STYLE) --- */
+        html, body { overflow-y: auto !important; height: auto !important; min-height: 100vh; }
+
+        .header-section {
+            background: linear-gradient(135deg, var(--primary), #243533);
+            padding: 40px 30px 80px 30px; /* Padding bawah gede buat naruh kartu progress */
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            color: white; position: relative; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .header-icon {
+            position: absolute; right: 10px; bottom: -10px;
+            font-size: 100px; opacity: 0.15; transform: rotate(-15deg);
+        }
+
+        /* Kartu Progress Total */
+        .progress-card {
+            background: var(--bg-card); padding: 25px; border-radius: 20px;
+            margin: -50px 20px 30px 20px; position: relative; z-index: 5;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid var(--border);
+        }
+        .progress-bar-bg {
+            width: 100%; height: 12px; background: var(--bg-body);
+            border-radius: 20px; overflow: hidden; margin-top: 15px;
+            border: 1px solid var(--border);
+        }
+        .progress-bar-fill {
+            height: 100%; width: 0%; background: var(--accent);
+            border-radius: 20px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; overflow: hidden;
+        }
+        /* Efek Shimmer/Kilau di Progress Bar */
+        .progress-bar-fill::after {
+            content: ''; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%); animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+        /* --- FOLDER ACCORDION SYSTEM --- */
+        .month-folder {
+            background: var(--bg-card); border-radius: 16px;
+            margin: 0 20px 15px 20px; border: 1px solid var(--border);
+            overflow: hidden; transition: 0.3s;
+        }
+        .month-folder.active {
+            border-color: var(--primary); box-shadow: 0 5px 15px rgba(58, 77, 57, 0.1);
+        }
+
+        /* Header Folder (Yang diklik) */
+        .folder-header {
+            padding: 18px 20px; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--bg-card); transition: 0.3s;
+        }
+        .folder-header:hover { background: rgba(58, 77, 57, 0.03); }
+        .folder-title {
+            display: flex; align-items: center; gap: 12px;
+            font-weight: 600; color: var(--text-main); font-size: 15px;
+        }
+        .folder-icon {
+            width: 36px; height: 36px; background: rgba(58, 77, 57, 0.1);
+            color: var(--primary); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+        }
+        .chevron { transition: 0.3s; color: var(--text-muted); }
+        .month-folder.active .chevron { transform: rotate(180deg); color: var(--primary); }
+
+        /* Isi Folder (List Tugas) */
+        .folder-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out;
+            background: var(--bg-body);
+        }
+        .month-folder.active .folder-content {
+            border-top: 1px solid var(--border);
+        }
+
+        /* Item Tugas */
+        .task-item {
+            padding: 15px 20px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 15px; cursor: pointer;
+            transition: 0.2s;
+        }
+        .task-item:last-child { border-bottom: none; }
+        .task-item:hover { background: rgba(255,255,255,0.5); }
+        
+        .custom-checkbox {
+            width: 22px; height: 22px; border: 2px solid var(--text-muted);
+            border-radius: 6px; display: flex; align-items: center; justify-content: center;
+            transition: 0.3s; flex-shrink: 0;
+        }
+        .task-item.completed .custom-checkbox {
+            background: #10b981; border-color: #10b981;
+        }
+        .custom-checkbox i { color: white; font-size: 12px; opacity: 0; transform: scale(0.5); transition: 0.2s; }
+        .task-item.completed .custom-checkbox i { opacity: 1; transform: scale(1); }
+
+        .task-text { font-size: 14px; color: var(--text-main); flex: 1; transition: 0.3s; }
+        .task-item.completed .task-text {
+            text-decoration: line-through; color: var(--text-muted);
+        }
+        
+        .xp-badge {
+            font-size: 11px; font-weight: 700; color: var(--accent);
+            background: rgba(166, 93, 70, 0.1); padding: 4px 8px; border-radius: 10px;
+        }
+
+        /* Responsif Mobile */
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .header-section { padding: 30px 20px 70px 20px; }
+            .progress-card { margin: -40px 15px 25px 15px; }
+            .month-folder { margin: 0 15px 10px 15px; }
+            
+            /* Tombol Back di Header */
+            .back-btn { display: block !important; margin-bottom: 15px; color: white; text-decoration: none; font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 30px;">
+            <div style="width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-feather-alt" style="color: var(--primary); font-size: 20px;"></i>
+            </div>
+            <div>
+                <h2 style="margin: 0; font-size: 18px; color: white;">WriteYuk</h2>
+                <p style="margin: 0; font-size: 11px; opacity: 0.7;">Community System</p>
+            </div>
+        </div>
+        <ul>
+            <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="chatbot.html"><i class="fas fa-robot"></i> Tanya Writey</a></li>
+            <li class="active"><a href="checklist.html"><i class="fas fa-tasks"></i> Misi Magang</a></li>
+            <li><a href="map.html"><i class="fas fa-toolbox"></i> Virtual HQ</a></li>
+            <li><a href="structure.html"><i class="fas fa-users"></i> Tim Redaksi</a></li>
+            <li style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <a href="index.html" style="color: #ffb3b3;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        
+        <div class="header-section">
+            <a href="dashboard.html" class="back-btn" style="display: none;"><i class="fas fa-arrow-left"></i> Kembali</a>
+            
+            <i class="fas fa-trophy header-icon"></i>
+            <h1 style="margin: 0; font-size: 24px;">Misi Magang 🎯</h1>
+            <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Selesaikan misi bulananmu untuk lulus!</p>
+        </div>
+
+        <div class="progress-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                <div>
+                    <small style="color: var(--text-muted); text-transform: uppercase; font-weight: bold; font-size: 11px;">Total Progress</small>
+                    <h2 id="statusTitle" style="margin: 2px 0 0 0; color: var(--primary); font-size: 20px;">Ayo Mulai! 💪</h2>
+                </div>
+                <h2 id="progressText" style="margin: 0; color: var(--accent); font-size: 24px;">0%</h2>
+            </div>
+            
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div id="folderContainer">
+            <div class="month-folder active">
+                <div class="folder-header" onclick="toggleFolder(this)">
+                    <div class="folder-title">
+                        <div class="folder-icon"><i class="fas fa-rocket"></i></div>
+                        <div>
+                            <span>Bulan 1: Onboarding</span>
+                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Pengenalan Budaya & SOP</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </div>
+                <div class="folder-content" style="max-height: 500px;"> <div class="task-item" onclick="toggleTask(this, 'm1_task1')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Join Grup WhatsApp & Kenalan</div>
+                        <span class="xp-badge">+20 XP</span>
+                    </div>
+                    <div class="task-item" onclick="toggleTask(this, 'm1_task2')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Baca & Pahami Brand Guidelines</div>
+                        <span class="xp-badge">+30 XP</span>
+                    </div>
+                    <div class="task-item" onclick="toggleTask(this, 'm1_task3')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Setup Akun Trello/Notion Tim</div>
+                        <span class="xp-badge">+20 XP</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="month-folder">
+                <div class="folder-header" onclick="toggleFolder(this)">
+                    <div class="folder-title">
+                        <div class="folder-icon"><i class="fas fa-pen-nib"></i></div>
+                        <div>
+                            <span>Bulan 2: Content Creation</span>
+                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Mulai Nulis Artikel & Copy</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </div>
+                <div class="folder-content">
+                    <div class="task-item" onclick="toggleTask(this, 'm2_task1')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Submit 2 Artikel SEO Friendly</div>
+                        <span class="xp-badge">+50 XP</span>
+                    </div>
+                    <div class="task-item" onclick="toggleTask(this, 'm2_task2')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Buat Caption Instagram (1 Minggu)</div>
+                        <span class="xp-badge">+40 XP</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="month-folder">
+                <div class="folder-header" onclick="toggleFolder(this)">
+                    <div class="folder-title">
+                        <div class="folder-icon"><i class="fas fa-bullhorn"></i></div>
+                        <div>
+                            <span>Bulan 3: Campaign & Ads</span>
+                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Belajar Marketing Dasar</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </div>
+                <div class="folder-content">
+                    <div class="task-item" onclick="toggleTask(this, 'm3_task1')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Analisis Kompetitor (SWOT)</div>
+                        <span class="xp-badge">+50 XP</span>
+                    </div>
+                    <div class="task-item" onclick="toggleTask(this, 'm3_task2')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Ideasi Campaign Ramadhan</div>
+                        <span class="xp-badge">+60 XP</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="month-folder">
+                <div class="folder-header" onclick="toggleFolder(this)">
+                    <div class="folder-title">
+                        <div class="folder-icon"><i class="fas fa-chart-line"></i></div>
+                        <div>
+                            <span>Bulan 4: Evaluation</span>
+                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Review Performa Konten</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </div>
+                <div class="folder-content">
+                    <div class="task-item" onclick="toggleTask(this, 'm4_task1')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Presentasi Hasil Insight Bulanan</div>
+                        <span class="xp-badge">+80 XP</span>
+                    </div>
+                </div>
+            </div>
+            
+             <div class="month-folder">
+                <div class="folder-header" onclick="toggleFolder(this)">
+                    <div class="folder-title">
+                        <div class="folder-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <div>
+                            <span>Bulan 5: Final Project</span>
+                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Sidang Akhir & Perpisahan</div>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </div>
+                <div class="folder-content">
+                    <div class="task-item" onclick="toggleTask(this, 'm5_task1')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Submit Laporan Magang Final</div>
+                        <span class="xp-badge">+100 XP</span>
+                    </div>
+                    <div class="task-item" onclick="toggleTask(this, 'm5_task2')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Farewell Party bareng Tim</div>
+                        <span class="xp-badge">+10 XP</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div style="height: 50px;"></div>
+    </main>
+
+    <script>
+        // 1. Logic Accordion (Buka Tutup Folder)
+        function toggleFolder(header) {
+            const folder = header.parentElement;
+            const content = folder.querySelector('.folder-content');
+            
+            // Tutup folder lain biar rapi (Optional, kalau mau satu aja yg kebuka)
+            // document.querySelectorAll('.month-folder').forEach(f => {
+            //     if(f !== folder) {
+            //         f.classList.remove('active');
+            //         f.querySelector('.folder-content').style.maxHeight = null;
+            //     }
+            // });
+
+            folder.classList.toggle('active');
+            
+            if (folder.classList.contains('active')) {
+                content.style.maxHeight = content.scrollHeight + "px";
+            } else {
+                content.style.maxHeight = null;
+            }
+        }
+
+        // 2. Logic Centang Tugas & Simpan ke LocalStorage
+        function toggleTask(element, taskId) {
+            // Cek status sekarang
+            const isCompleted = element.classList.contains('completed');
+            
+            if (!isCompleted) {
+                // Tandai Selesai
+                element.classList.add('completed');
+                localStorage.setItem(taskId, 'true');
+            } else {
+                // Hapus Tanda Selesai
+                element.classList.remove('completed');
+                localStorage.removeItem(taskId);
+            }
+            
+            updateGlobalProgress(); // Hitung ulang persen
+        }
+
+        // 3. Load Data saat Halaman Dibuka
+        document.addEventListener("DOMContentLoaded", () => {
+            // Load status checkbox
+            const allTasks = document.querySelectorAll('.task-item');
+            allTasks.forEach(task => {
+                // Ambil ID task dari atribut onclick (agak hacky tapi simpel)
+                const taskId = task.getAttribute('onclick').match(/'([^']+)'/)[1];
+                
+                if (localStorage.getItem(taskId) === 'true') {
+                    task.classList.add('completed');
+                }
+            });
+
+            updateGlobalProgress();
+            
+            // Set folder pertama kebuka otomatis (biar gak sepi)
+            // const firstFolder = document.querySelector('.month-folder');
+            // const firstContent = firstFolder.querySelector('.folder-content');
+            // firstContent.style.maxHeight = firstContent.scrollHeight + "px";
+        });
+
+        // 4. Hitung Total Progress (Semua Bulan)
+        function updateGlobalProgress() {
+            const allTasks = document.querySelectorAll('.task-item');
+            const completedTasks = document.querySelectorAll('.task-item.completed');
+            
+            const total = allTasks.length;
+            const checked = completedTasks.length;
+            
+            const percent = total === 0 ? 0 : Math.round((checked / total) * 100);
+
+            // Update UI
+            document.getElementById('progressBar').style.width = percent + "%";
+            document.getElementById('progressText').innerText = percent + "%";
+
+            // Update Teks Motivasi
+            const title = document.getElementById('statusTitle');
+            if (percent === 0) title.innerText = "Ayo Mulai! 💪";
+            else if (percent < 30) title.innerText = "Good Start! 🔥";
+            else if (percent < 70) title.innerText = "Keep Going! 🚀";
+            else if (percent < 100) title.innerText = "Dikit Lagi Lulus! 🎓";
+            else {
+                title.innerText = "LULUS MAGANG! 🎉";
+                document.getElementById('progressBar').style.background = "#10b981"; // Hijau
+                triggerConfetti();
+            }
+        }
+
+        // 5. Efek Confetti (Hore-hore)
+        function triggerConfetti() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            var interval = setInterval(function() {
+              var timeLeft = animationEnd - Date.now();
+              if (timeLeft <= 0) return clearInterval(interval);
+              var particleCount = 50 * (timeLeft / duration);
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+              confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+
+        // Dark Mode Check
+        if (localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+    </script>
+</body>
+</html>

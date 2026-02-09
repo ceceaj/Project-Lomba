@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - WriteYuk Community</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS KHUSUS DASHBOARD --- */
+
+        /* 1. Header Dashboard dengan Gradasi */
+        .dashboard-header {
+            padding: 40px 30px 80px 30px; /* Padding bawah gede buat naruh kartu stats */
+            background: linear-gradient(135deg, var(--primary), #243533); 
+            color: white;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 10px 30px rgba(58, 77, 57, 0.2);
+            position: relative;
+        }
+
+        .header-content {
+            max-width: 1000px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* 2. Statistik Cards (Numpuk di atas Header) */
+        .stats-container {
+            max-width: 1000px; margin: -50px auto 30px auto; /* Naik ke atas header */
+            padding: 0 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; position: relative; z-index: 10;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px; padding: 20px;
+            display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+        .stat-icon {
+            width: 50px; height: 50px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+
+        /* 3. Menu Grid (Tombol Besar) */
+        .menu-grid {
+            max-width: 1000px; margin: 0 auto 40px auto; padding: 0 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .action-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 18px; padding: 25px;
+            text-align: center; cursor: pointer;
+            transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center;
+            height: 100%;
+        }
+        .action-card:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(to bottom, var(--bg-card), #F2F4E8);
+            border-color: var(--accent);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .action-icon {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: var(--bg-body); color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; margin-bottom: 15px;
+            transition: 0.3s;
+        }
+        .action-card:hover .action-icon {
+            background: var(--primary); color: white; transform: scale(1.1);
+        }
+
+        /* 4. Quote Box */
+        .quote-box {
+            max-width: 1000px; margin: 0 auto 20px auto;
+            background: rgba(58, 77, 57, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 20px; border-radius: 0 12px 12px 0;
+            display: flex; gap: 15px; align-items: flex-start;
+        }
+
+        /* 5. Mobile Sidebar Toggle */
+        .mobile-menu-btn {
+            display: none; font-size: 24px; cursor: pointer; color: white;
+        }
+
+        /* Responsif HP */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); transition: 0.3s; }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .mobile-menu-btn { display: block; }
+            .header-content { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .menu-grid { grid-template-columns: 1fr; } /* Menu jadi 1 kolom di HP biar gede */
+            
+            /* Overlay Hitam saat sidebar buka */
+            .overlay {
+                display: none; position: fixed; top: 0; left: 0;
+                width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99;
+            }
+            .overlay.active { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" onclick="toggleSidebar()"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 30px;">
+            <div style="width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-feather-alt" style="color: var(--primary); font-size: 20px;"></i>
+            </div>
+            <div>
+                <h2 style="margin: 0; font-size: 18px; color: white;">WriteYuk</h2>
+                <p style="margin: 0; font-size: 11px; opacity: 0.7;">Community System</p>
+            </div>
+        </div>
+        
+        <ul>
+            <li class="active"><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="chatbot.html"><i class="fas fa-robot"></i> Tanya Writey</a></li>
+            <li><a href="checklist.html"><i class="fas fa-tasks"></i> Misi Magang</a></li>
+            <li><a href="map.html"><i class="fas fa-toolbox"></i> Virtual HQ</a></li>
+            <li><a href="structure.html"><i class="fas fa-users"></i> Tim Redaksi</a></li>
+            
+            <li style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <a href="index.html" onclick="logout()" style="color: #ffb3b3;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        
+        <div class="dashboard-header">
+            <div class="header-content">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-bars mobile-menu-btn" onclick="toggleSidebar()"></i>
+                    <div>
+                        <h1 style="font-size: 24px; margin: 0;">Hai, <span id="userNameDisplay">Buddy</span>! 👋</h1>
+                        <p style="opacity: 0.8; font-size: 13px; margin: 5px 0 0 0;">
+                            Internship Day 1 • Content Writer Division
+                        </p>
+                    </div>
+                </div>
+                
+                <button onclick="toggleDarkMode()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-moon"></i> Ganti Tema
+                </button>
+            </div>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #e6fffa; color: #10b981;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div>
+                    <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Status Magang</p>
+                    <h3 style="margin: 0; color: var(--text-main);">On Track 🚀</h3>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #e0f2fe; color: #0ea5e9;">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div>
+                    <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Mentor Kamu</p>
+                    <h3 style="margin: 0; color: var(--text-main);">Kak Cece</h3>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon" style="background: #fef3c7; color: #f59e0b;">
+                    <i class="fas fa-hourglass-half"></i>
+                </div>
+                <div>
+                    <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Sisa Waktu</p>
+                    <h3 style="margin: 0; color: var(--text-main);">90 Hari</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-grid">
+            <a href="chatbot.html" style="text-decoration: none; color: inherit;">
+                <div class="action-card">
+                    <div class="action-icon"><i class="fas fa-robot"></i></div>
+                    <h3 style="margin: 0 0 5px 0; font-size: 18px;">Tanya Writey</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+                        Asisten pintar buat tanya SOP, Lokasi & Izin.
+                    </p>
+                </div>
+            </a>
+
+            <a href="checklist.html" style="text-decoration: none; color: inherit;">
+                <div class="action-card">
+                    <div class="action-icon" style="color: var(--accent);"><i class="fas fa-tasks"></i></div>
+                    <h3 style="margin: 0 0 5px 0; font-size: 18px;">Misi Harian</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+                        Cek tugas onboarding & progres magangmu.
+                    </p>
+                </div>
+            </a>
+
+            <a href="structure.html" style="text-decoration: none; color: inherit;">
+                <div class="action-card">
+                    <div class="action-icon" style="color: #878953;"><i class="fas fa-users"></i></div>
+                    <h3 style="margin: 0 0 5px 0; font-size: 18px;">Tim Redaksi</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin: 0;">
+                        Kenalan sama struktur tim & atasanmu.
+                    </p>
+                </div>
+            </a>
+        </div>
+
+        <div class="quote-box">
+            <i class="fas fa-quote-left" style="font-size: 24px; color: var(--primary); opacity: 0.3;"></i>
+            <div>
+                <p style="margin: 0; font-style: italic; font-size: 14px; color: var(--text-main);">
+                    "Menulis adalah bekerja untuk keabadian. Apa yang kamu tulis hari ini, akan dibaca dunia esok hari."
+                </p>
+                <small style="display: block; margin-top: 5px; color: var(--text-muted); font-weight: 600;">— Pramoedya Ananta Toer</small>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // 1. Tampilkan Nama User dari Login
+        window.onload = function() {
+            const user = localStorage.getItem('currentUser'); // Ambil nama yg login tadi
+            if (user) {
+                document.getElementById('userNameDisplay').innerText = user;
+            }
+        };
+
+        // 2. Logic Sidebar Mobile
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // 3. Logic Dark Mode
+        function toggleDarkMode() {
+            const body = document.body;
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Cek Tema Tersimpan saat loading
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        }
+
+        // 4. Logout
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('currentUser');
+        }
+    </script>
+</body>
+</html>

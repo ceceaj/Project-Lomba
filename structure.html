@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struktur Tim - WriteYuk Community</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS KHUSUS STRUKTUR ORGANISASI */
+        html, body { overflow-y: auto !important; height: auto !important; min-height: 100vh; }
+
+        .header-section {
+            background: linear-gradient(135deg, var(--primary), #243533);
+            padding: 40px 30px 60px 30px; 
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            color: white; position: relative; overflow: hidden; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 50px;
+        }
+        .header-bg-icon {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 200px; opacity: 0.05; color: white; pointer-events: none;
+        }
+
+        /* CONTAINER POHON STRUKTUR */
+        .org-tree {
+            display: flex; flex-direction: column; align-items: center; gap: 40px;
+            padding-bottom: 80px; position: relative;
+        }
+
+        /* LEVEL (BARIS) */
+        .level {
+            display: flex; justify-content: center; gap: 40px; position: relative; z-index: 2;
+        }
+
+        /* CARD STYLE (GLASSMORPHISM) */
+        .profile-card {
+            background: var(--bg-card); width: 240px; padding: 30px 20px;
+            border-radius: 20px; border: 1px solid var(--border);
+            text-align: center; position: relative; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        
+        .profile-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(58, 77, 57, 0.15);
+        }
+
+        /* FOTO PROFIL */
+        .img-wrapper {
+            width: 100px; height: 100px; margin: 0 auto 15px auto;
+            position: relative;
+        }
+        .profile-img {
+            width: 100%; height: 100%; border-radius: 50%;
+            object-fit: cover; border: 4px solid var(--bg-body);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            background: #f0f0f0; /* Placeholder warna abu */
+        }
+        .status-badge {
+            position: absolute; bottom: 5px; right: 5px;
+            width: 18px; height: 18px; background: #10b981;
+            border: 3px solid var(--bg-card); border-radius: 50%;
+        }
+
+        /* TEXT STYLE */
+        .role-badge {
+            background: rgba(58, 77, 57, 0.1); color: var(--primary);
+            padding: 6px 14px; border-radius: 20px;
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; display: inline-block; margin-bottom: 12px;
+        }
+        h3 { font-size: 18px; margin: 5px 0; color: var(--text-main); }
+        p { font-size: 13px; color: var(--text-muted); margin: 0; }
+        
+        /* TOMBOL SOSMED KECIL */
+        .social-links {
+            margin-top: 15px; display: flex; justify-content: center; gap: 10px;
+            opacity: 0; transform: translateY(10px); transition: 0.3s;
+        }
+        .profile-card:hover .social-links { opacity: 1; transform: translateY(0); }
+        
+        .social-btn {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--bg-body); color: var(--text-muted);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; transition: 0.3s; border: 1px solid var(--border);
+        }
+        .social-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+
+
+        /* --- GARIS PENGHUBUNG (CSS MAGIC) --- */
+        /* Garis Vertikal (Atas Card) */
+        .level:not(:first-child) .profile-card::before {
+            content: ''; position: absolute; top: -40px; left: 50%;
+            width: 2px; height: 40px; background: var(--border);
+            transform: translateX(-50%); z-index: -1;
+        }
+
+        /* Garis Horizontal (Penghubung Antar Card) */
+        .connector-bar {
+            position: absolute; top: -40px; left: 0; right: 0;
+            height: 2px; background: var(--border);
+            width: calc(100% - 240px); /* Kurangi lebar 1 card biar pas di tengah */
+            margin: 0 auto; z-index: -1;
+        }
+        
+        /* Garis Turun dari Level Atas */
+        .level:not(:last-child) .profile-card::after {
+            content: ''; position: absolute; bottom: -40px; left: 50%;
+            width: 2px; height: 40px; background: var(--border);
+            transform: translateX(-50%); z-index: -1;
+        }
+
+        /* Hapus garis bawah di level terakhir */
+        .level:last-child .profile-card::after { display: none; }
+
+
+        /* --- RESPONSIF HP (UBAH JADI GRID LIST) --- */
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .header-section { padding: 30px 20px; margin-bottom: 30px; }
+            
+            /* Ubah Struktur Pohon jadi Grid Biasa */
+            .org-tree { gap: 20px; padding-bottom: 40px; }
+            .level {
+                flex-direction: column; /* Susun ke bawah */
+                gap: 20px; width: 100%; align-items: center;
+            }
+            .level:not(:first-child) { margin-top: 0; }
+
+            /* Sembunyikan Garis-garis Ribet */
+            .profile-card::before, .profile-card::after, .connector-bar {
+                display: none !important; 
+            }
+
+            .profile-card { width: 90%; max-width: 350px; display: flex; align-items: center; text-align: left; padding: 20px; gap: 20px; }
+            .img-wrapper { margin: 0; width: 70px; height: 70px; flex-shrink: 0; }
+            .social-links { opacity: 1; transform: translateY(0); justify-content: flex-start; margin-top: 10px; }
+            
+            /* Back Button */
+            .back-btn { display: block !important; margin-bottom: 15px; color: white; text-decoration: none; font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 30px;">
+            <div style="width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-feather-alt" style="color: var(--primary); font-size: 20px;"></i>
+            </div>
+            <div>
+                <h2 style="margin: 0; font-size: 18px; color: white;">WriteYuk</h2>
+                <p style="margin: 0; font-size: 11px; opacity: 0.7;">Community System</p>
+            </div>
+        </div>
+        <ul>
+            <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="chatbot.html"><i class="fas fa-robot"></i> Tanya Writey</a></li>
+            <li><a href="checklist.html"><i class="fas fa-tasks"></i> Misi Magang</a></li>
+            <li><a href="map.html"><i class="fas fa-toolbox"></i> Virtual HQ</a></li>
+            <li class="active"><a href="structure.html"><i class="fas fa-users"></i> Tim Redaksi</a></li>
+            <li style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <a href="index.html" style="color: #ffb3b3;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        
+        <div class="header-section">
+            <a href="dashboard.html" class="back-btn" style="display: none; position: absolute; top: 30px; left: 20px;"><i class="fas fa-arrow-left"></i></a>
+            
+            <i class="fas fa-users header-bg-icon"></i>
+            <h1 style="margin: 0; font-size: 28px; position: relative; z-index: 2;">Meet The Team 🚀</h1>
+            <p style="margin: 8px 0 0 0; opacity: 0.9; position: relative; z-index: 2; color: white;">Orang-orang hebat di balik Divisi Creative WriteYuk.</p>
+        </div>
+
+        <div class="org-tree">
+            
+            <div class="level">
+                <div class="profile-card">
+                    <div class="img-wrapper">
+                        <img src="https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671142.jpg" class="profile-img">
+                        <div class="status-dot status-badge"></div>
+                    </div>
+                    <span class="role-badge">Head of Creative</span>
+                    <h3>Pak Cece Aditya</h3>
+                    <p>"Work hard, Play hard."</p>
+                    
+                    <div class="social-links">
+                        <a href="#" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-btn"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="level">
+                <div class="connector-bar"></div>
+                
+                <div class="profile-card">
+                    <div class="img-wrapper">
+                        <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg" class="profile-img">
+                        <div class="status-dot status-badge"></div>
+                    </div>
+                    <span class="role-badge" style="background: rgba(166, 93, 70, 0.1); color: var(--accent);">Senior Designer</span>
+                    <h3>Kak Adit</h3>
+                    <p>Mentor Design</p>
+
+                    <div class="social-links">
+                        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-btn"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+
+                <div class="profile-card">
+                    <div class="img-wrapper">
+                        <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-punk-hair-style_23-2149436198.jpg" class="profile-img">
+                        <div class="status-dot status-badge"></div>
+                    </div>
+                    <span class="role-badge" style="background: rgba(234, 179, 8, 0.1); color: #ca8a04;">Video Lead</span>
+                    <h3>Kak Ditya</h3>
+                    <p>Mentor Videography</p>
+
+                    <div class="social-links">
+                        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-btn"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="level">
+                <div class="connector-bar"></div>
+                
+                <div class="profile-card" style="border-color: var(--accent); box-shadow: 0 0 0 4px rgba(166, 93, 70, 0.1);">
+                    <div class="img-wrapper">
+                        <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-pink-hair_23-2149436186.jpg" class="profile-img">
+                        <div class="status-dot status-badge" style="background: #3b82f6;"></div>
+                    </div>
+                    <span class="role-badge" style="background: #f1f5f9; color: #64748b;">Intern</span>
+                    <h3>Khanza Ramadini</h3>
+                    <p>Graphic Design Intern</p>
+                    
+                    <div class="social-links">
+                        <a href="#" class="social-btn"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <div class="profile-card">
+                    <div class="img-wrapper">
+                        <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-glasses_23-2149436190.jpg" class="profile-img">
+                        <div class="status-dot status-badge" style="background: #3b82f6;"></div>
+                    </div>
+                    <span class="role-badge" style="background: #f1f5f9; color: #64748b;">Intern</span>
+                    <h3>Cece Ajaaa</h3>
+                    <p>Junior Programmer</p>
+
+                    <div class="social-links">
+                        <a href="#" class="social-btn"><i class="fab fa-dribbble"></i></a>
+                        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script>
+        // Dark Mode Check
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+    </script>
+</body>
+</html>

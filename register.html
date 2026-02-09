@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabung Komunitas - WriteYuk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 1. RESET & VARIABLE --- */
+        :root {
+            --primary: #3A4D39;
+            --accent: #A65D46;
+            --cream: #FDFCF5;
+            --glass: rgba(255, 255, 255, 0.7);
+            --border: rgba(255, 255, 255, 0.4);
+            --text: #2F3E32;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background-color: var(--cream);
+            height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; position: relative;
+        }
+/* --- 2. AURORA ANIMATION (YANG LEBIH HIDUP) --- */
+        .aurora-blob {
+            position: absolute;
+            /* Bentuknya gak bulat sempurna biar kayak cairan */
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; 
+            filter: blur(50px); /* Blur dikurangin dikit biar warnanya lebih nonjok */
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 10s infinite alternate ease-in-out;
+        }
+
+        /* Blob 1: Hijau (Kiri Atas -> Gerak ke Tengah) */
+        .blob-1 {
+            width: 500px; height: 500px;
+            background: #3A4D39;
+            top: -100px; left: -100px;
+            animation-name: moveOne;
+            animation-duration: 12s;
+        }
+
+        /* Blob 2: Terracotta (Kanan Bawah -> Gerak Naik) */
+        .blob-2 {
+            width: 450px; height: 450px;
+            background: #45ca3f;
+            bottom: -100px; right: -100px;
+            animation-name: moveTwo;
+            animation-duration: 10s;
+        }
+
+        /* Blob 3: Hijau Muda (Nyelip di Tengah) */
+        .blob-3 {
+            width: 300px; height: 300px;
+            background: #878953;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            animation-name: moveThree;
+            animation-duration: 15s;
+        }
+
+        /* --- DEFINISI GERAKAN (KEYFRAMES) --- */
+        /* Gerakan Blob 1: Maju Mundur Cantik */
+        @keyframes moveOne {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(100px, 100px) rotate(45deg); } 
+        }
+
+        /* Gerakan Blob 2: Naik ke atas */
+        @keyframes moveTwo {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-120px, -100px) rotate(-30deg); } 
+        }
+
+        /* Gerakan Blob 3: Muter-muter di tengah */
+        @keyframes moveThree {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            33% { transform: translate(-30%, -70%) scale(1.2); }
+            66% { transform: translate(-70%, -30%) scale(0.9); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* --- 3. GLASS CARD (Kartu Kaca) --- */
+        .register-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px); /* Efek Kaca Buram */
+            -webkit-backdrop-filter: blur(15px);
+            width: 100%; max-width: 400px;
+            padding: 40px 30px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 50px rgba(58, 77, 57, 0.15);
+            text-align: center;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideUp 0.8s forwards;
+        }
+
+        @keyframes slideUp { to { transform: translateY(0); opacity: 1; } }
+
+        /* --- 4. ELEMENT STYLING --- */
+        .logo-badge {
+            width: 70px; height: 70px;
+            background: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            font-size: 30px; color: var(--primary);
+        }
+
+        h2 { color: var(--primary); font-weight: 700; margin-bottom: 5px; }
+        p.subtitle { color: #666; font-size: 14px; margin-bottom: 30px; }
+
+        .input-group { position: relative; margin-bottom: 20px; text-align: left; }
+        
+        .input-group input {
+            width: 100%; padding: 14px 14px 14px 45px;
+            border: 2px solid rgba(58, 77, 57, 0.2);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.6);
+            font-size: 14px; transition: 0.3s;
+            outline: none; color: var(--text);
+        }
+
+        .input-group input:focus {
+            background: white; border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(58, 77, 57, 0.1);
+        }
+
+        .input-group i {
+            position: absolute; left: 16px; top: 50%;
+            transform: translateY(-50%);
+            color: #888; transition: 0.3s;
+        }
+        
+        .input-group input:focus + i { color: var(--primary); }
+
+        .toggle-eye {
+            left: auto !important; right: 16px; cursor: pointer;
+        }
+        .toggle-eye:hover { color: var(--accent); }
+
+        /* Button */
+        .btn-submit {
+            width: 100%; padding: 14px;
+            background: var(--primary); color: white;
+            border: none; border-radius: 12px;
+            font-weight: 600; cursor: pointer;
+            transition: 0.3s; margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(166, 93, 70, 0.3);
+        }
+
+        /* Password Strength Bar */
+        .strength-container {
+            height: 4px; background: #ddd; margin: -10px 0 20px;
+            border-radius: 2px; overflow: hidden; display: none;
+        }
+        .strength-fill { height: 100%; width: 0%; transition: 0.3s; }
+
+        /* Toast Notification */
+        #toast {
+            visibility: hidden; min-width: 250px;
+            background-color: #333; color: #fff;
+            text-align: center; border-radius: 50px; padding: 12px 24px;
+            position: fixed; z-index: 1000; left: 50%; bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 14px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            opacity: 0; transition: all 0.5s;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+        #toast.success { background: var(--primary); }
+        #toast.error { background: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <div class="aurora-blob blob-1"></div>
+    <div class="aurora-blob blob-2"></div>
+    <div class="aurora-blob blob-3"></div>
+
+    <div class="register-card">
+        <div class="logo-badge">
+            <i class="fas fa-feather-alt"></i>
+        </div>
+        <h2>Join WriteYuk</h2>
+        <p class="subtitle">Mulai nulis dan bangun portofoliomu.</p>
+
+        <form onsubmit="handleRegister(event)">
+            <div class="input-group">
+                <input type="text" id="regUser" placeholder="Username Kamu" required autocomplete="off">
+                <i class="fas fa-user"></i>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="regPass" placeholder="Bikin Password" required oninput="checkStrength()">
+                <i class="fas fa-lock"></i>
+                <i class="fas fa-eye toggle-eye" onclick="togglePass('regPass', this)"></i>
+            </div>
+
+            <div class="strength-container" id="strengthBox">
+                <div class="strength-fill" id="strengthBar"></div>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="regPassConfirm" placeholder="Ulangi Password" required>
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnReg">
+                Daftar Sekarang 🚀
+            </button>
+        </form>
+
+        <p style="margin-top: 25px; font-size: 13px; color: #666;">
+            Udah punya akun? <a href="index.html" style="color: var(--primary); font-weight: 700; text-decoration: none;">Login aja</a>
+        </p>
+    </div>
+
+    <div id="toast">Notifikasi</div>
+
+    <script>
+        // 1. Logic Toggle Mata Password
+        function togglePass(id, icon) {
+            const input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("fa-eye", "fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("fa-eye-slash", "fa-eye");
+            }
+        }
+
+        // 2. Logic Strength Meter (Hijau-Kuning-Merah)
+        function checkStrength() {
+            const val = document.getElementById('regPass').value;
+            const box = document.getElementById('strengthBox');
+            const bar = document.getElementById('strengthBar');
+            
+            if(val.length > 0) box.style.display = 'block';
+            else box.style.display = 'none';
+
+            if (val.length < 4) {
+                bar.style.width = '30%'; bar.style.background = '#e74c3c'; // Merah
+            } else if (val.length < 8) {
+                bar.style.width = '60%'; bar.style.background = '#f1c40f'; // Kuning
+            } else {
+                bar.style.width = '100%'; bar.style.background = '#2ecc71'; // Hijau
+            }
+        }
+
+        // 3. Logic Register Simpan ke LocalStorage
+        function handleRegister(e) {
+            e.preventDefault();
+            
+            const user = document.getElementById('regUser').value;
+            const pass = document.getElementById('regPass').value;
+            const conf = document.getElementById('regPassConfirm').value;
+            const btn = document.getElementById('btnReg');
+
+            // Validasi
+            if (pass !== conf) {
+                showToast("Password gak sama nih, cek lagi ya!", "error");
+                return;
+            }
+
+            // Animasi Loading
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+            btn.style.opacity = "0.8";
+
+            setTimeout(() => {
+                // Simpan Data
+                localStorage.setItem('storedUser', user);
+                localStorage.setItem('storedPass', pass);
+                
+                showToast("Yeay! Berhasil Gabung. OTW Login...", "success");
+
+                setTimeout(() => {
+                    window.location.href = 'index.html'; // Redirect ke Login
+                }, 1500);
+            }, 1200);
+        }
+
+        function showToast(msg, type) {
+            const toast = document.getElementById("toast");
+            toast.innerText = msg;
+            toast.className = "show " + type;
+            setTimeout(() => toast.className = toast.className.replace("show", ""), 3000);
+        }
+    </script>
+</body>
+</html>

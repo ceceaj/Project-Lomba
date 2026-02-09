@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanya Writey - WriteYuk Community</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- CSS KHUSUS CHATBOT --- */
+        body { overflow: hidden; } /* Biar gak double scrollbar */
+
+        .chat-layout {
+            display: flex; flex-direction: column; height: 100vh;
+            background-color: var(--bg-body); position: relative;
+        }
+
+        /* HEADER */
+        .chat-header {
+            padding: 15px 30px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); z-index: 10;
+        }
+        .bot-info { display: flex; align-items: center; gap: 15px; }
+        .bot-avatar {
+            width: 48px; height: 48px;
+            background: rgba(76, 86, 63, 0.1); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--primary); position: relative;
+        }
+        .status-dot {
+            width: 14px; height: 14px; background: #10b981;
+            border-radius: 50%; position: absolute; bottom: 0; right: 0;
+            border: 3px solid var(--bg-card); /* Border warna card biar nyatu */
+        }
+
+        /* CHAT BOX (AREA CHAT) */
+        .chat-box {
+            flex: 1; padding: 25px 30px 140px 30px; /* Padding bawah lega buat input */
+            overflow-y: auto; display: flex; flex-direction: column; gap: 20px;
+            scroll-behavior: smooth;
+            
+            /* BACKGROUND POLA HALUS (Gak Bikin Pusing) */
+            background-color: var(--bg-body);
+            background-image: radial-gradient(var(--primary) 0.5px, transparent 0.5px);
+            background-size: 30px 30px; /* Jarak titik diperlebar */
+            opacity: 1;
+        }
+        
+        /* BUBBLE CHAT */
+        .message {
+            max-width: 75%; padding: 14px 20px; border-radius: 20px;
+            font-size: 15px; line-height: 1.6; position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
+            animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            word-wrap: break-word;
+        }
+        
+        .message.bot {
+            align-self: flex-start;
+            background: var(--bg-card); color: var(--text-main);
+            border-top-left-radius: 4px; border: 1px solid var(--border);
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            background: var(--primary); color: white;
+            border-top-right-radius: 4px;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        /* SUGGESTION CHIPS (Saran Pertanyaan) */
+        .suggestions-container {
+            position: absolute; bottom: 100px; left: 290px; right: 30px;
+            display: flex; gap: 10px; overflow-x: auto; padding: 5px;
+            z-index: 5; scrollbar-width: none; mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
+        }
+        .suggestions-container::-webkit-scrollbar { display: none; }
+        
+        .chip {
+            background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
+            padding: 10px 18px; border-radius: 50px;
+            font-size: 13px; color: var(--primary); border: 1px solid var(--primary);
+            cursor: pointer; white-space: nowrap; transition: 0.3s;
+            font-weight: 500;
+        }
+        .chip:hover { background: var(--primary); color: white; transform: translateY(-3px); }
+
+        /* INPUT AREA (TEXTAREA) */
+        .input-area-wrapper {
+            position: absolute; bottom: 30px; left: 290px; right: 30px;
+            background: var(--bg-card);
+            padding: 10px 15px; border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 1px solid var(--border);
+            display: flex; align-items: flex-end; gap: 12px;
+            transition: 0.3s;
+        }
+        .input-area-wrapper:focus-within { border-color: var(--primary); box-shadow: 0 10px 40px rgba(58, 77, 57, 0.15); }
+        
+        #userInput {
+            flex: 1; border: none !important; background: transparent !important;
+            box-shadow: none !important; padding: 12px 5px; font-size: 15px;
+            resize: none; height: 48px; max-height: 120px;
+            font-family: 'Poppins', sans-serif; color: var(--text-main);
+            overflow-y: hidden; /* Auto grow script nanti */
+        }
+        #userInput::placeholder { color: var(--text-muted); opacity: 0.7; }
+
+        .btn-send {
+            width: 48px; height: 48px; background: var(--primary);
+            border-radius: 50%; color: white; border: none;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s; flex-shrink: 0;
+            margin-bottom: 2px;
+        }
+        .btn-send:hover { transform: scale(1.1) rotate(-10deg); background: var(--accent); }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .input-area-wrapper, .suggestions-container { left: 20px; right: 20px; bottom: 20px; }
+            .suggestions-container { bottom: 90px; }
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+            .bot-info h3 { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 30px;">
+            <div style="width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-feather-alt" style="color: var(--primary); font-size: 20px;"></i>
+            </div>
+            <div>
+                <h2 style="margin: 0; font-size: 18px; color: white;">WriteYuk</h2>
+                <p style="margin: 0; font-size: 11px; opacity: 0.7;">Community System</p>
+            </div>
+        </div>
+        
+        <ul>
+            <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li class="active"><a href="chatbot.html"><i class="fas fa-robot"></i> Tanya Writey</a></li>
+            <li><a href="checklist.html"><i class="fas fa-tasks"></i> Misi Magang</a></li>
+            <li><a href="map.html"><i class="fas fa-toolbox"></i> Virtual HQ</a></li>
+            <li><a href="structure.html"><i class="fas fa-users"></i> Tim Redaksi</a></li>
+            
+            <li style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <a href="index.html" style="color: #ffb3b3;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="main-content chat-layout">
+        
+        <div class="chat-header">
+            <div class="bot-info">
+                <a href="dashboard.html" class="back-btn" style="margin-right: 10px; display: none; color: var(--text-main);">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                
+                <div class="bot-avatar">
+                    <i class="fas fa-robot" style="font-size: 24px; color: var(--primary);"></i>
+                    <div class="status-dot"></div>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 16px; color: var(--text-main);">Writey (AI Buddy)</h3>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; display: inline-block;"></span>
+                        <span style="font-size: 12px; color: var(--text-muted);">Online • Fast Response</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="toggleDarkMode()" style="background: transparent; border: 1px solid var(--border); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; color: var(--text-main);">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <div class="chat-box" id="chatBox">
+            <div class="message bot">
+                Hai Buddy, <b id="userNameChat" style="color: var(--primary);">Writer</b>! 👋<br>
+                Aku Writey, asisten pribadimu di WriteYuk.<br><br>
+                Kamu bisa tanya soal:<br>
+                ✅ Password  WiFi<br>
+                ✅ Cara Izin/Cuti<br>
+                ✅ SOP Penulisan
+            </div>
+        </div>
+
+        <div class="suggestions-container">
+            <div class="chip" onclick="sendQuickMessage('Password WiFi apa?')">📶 Info WiFi</div>
+            <div class="chip" onclick="sendQuickMessage('Minta dokumen SOP dong')">📄 Dokumen SOP</div>
+            <div class="chip" onclick="sendQuickMessage('Cara izin sakit gimana?')">🤒 Izin Sakit</div>
+            <div class="chip" onclick="sendQuickMessage('Siapa mentor aku?')">👤 Info Mentor</div>
+        </div>
+
+        <div class="input-area-wrapper">
+            <textarea id="userInput" placeholder="Ketik pertanyaanmu di sini..." rows="1" oninput="autoResize(this)"></textarea>
+            <button class="btn-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+
+    </main>
+
+    <script>
+        // 1. Load Username
+        const userName = localStorage.getItem('currentUser') || 'Buddy';
+        document.getElementById('userNameChat').innerText = userName;
+
+        // 2. Auto Resize Textarea (Biar pas ngetik panjang dia melar ke atas)
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        // 3. Fungsi Kirim Pesan Cepat (Chip)
+        function sendQuickMessage(text) {
+            document.getElementById('userInput').value = text;
+            sendMessage();
+        }
+
+        // 4. Dark Mode Logic
+        if (localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
+        function toggleDarkMode() {
+            const body = document.body;
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // 5. Responsive Back Button
+        if (window.innerWidth <= 768) {
+            document.querySelector('.back-btn').style.display = 'block';
+        }
+
+        /* --- INTEGRASI KE SCRIPT.JS (LOGIKA AI) --- */
+        // Pastikan script.js kamu support function addBubble() yang handle animasi typing
+        // Kita modifikasi dikit fungsi sendMessage di sini buat handle UI-nya dulu
+    </script>
+    
+    <script src="assets/js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk - WriteYuk Community</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 1. RESET & VARIABLE (SAMA PERSIS REGISTER) --- */
+        :root {
+            --primary: #3A4D39;
+            --accent: #A65D46;
+            --cream: #FDFCF5;
+            --glass: rgba(255, 255, 255, 0.7);
+            --border: rgba(255, 255, 255, 0.4);
+            --text: #2F3E32;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background-color: var(--cream);
+            height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; position: relative;
+        }
+
+        /* --- 2. AURORA ANIMATION (VERSI GERAK LIAR) --- */
+        .aurora-blob {
+            position: absolute;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            filter: blur(50px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 10s infinite alternate ease-in-out;
+        }
+
+        .blob-1 {
+            width: 500px; height: 500px; background: #3A4D39;
+            top: -100px; left: -100px; animation: moveOne 12s infinite alternate;
+        }
+        .blob-2 {
+            width: 450px; height: 450px; background: #A65D46;
+            bottom: -100px; right: -100px; animation: moveTwo 10s infinite alternate;
+        }
+        .blob-3 {
+            width: 300px; height: 300px; background: #878953;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            animation: moveThree 15s infinite alternate;
+        }
+
+        @keyframes moveOne {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(100px, 100px) rotate(45deg); } 
+        }
+        @keyframes moveTwo {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-120px, -100px) rotate(-30deg); } 
+        }
+        @keyframes moveThree {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            33% { transform: translate(-30%, -70%) scale(1.2); }
+            66% { transform: translate(-70%, -30%) scale(0.9); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* --- 3. GLASS CARD LOGIN --- */
+        .login-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            width: 100%; max-width: 380px; /* Lebih ramping dikit dari register */
+            padding: 40px 30px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 50px rgba(58, 77, 57, 0.15);
+            text-align: center;
+            transform: translateY(20px); opacity: 0;
+            animation: slideUp 0.8s forwards;
+        }
+
+        @keyframes slideUp { to { transform: translateY(0); opacity: 1; } }
+
+        /* --- 4. ELEMENT STYLING --- */
+        .logo-badge {
+            width: 80px; height: 80px;
+            background: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            font-size: 35px; color: var(--primary);
+            animation: bounceLogo 3s infinite ease-in-out;
+        }
+        @keyframes bounceLogo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+        h2 { color: var(--primary); font-weight: 700; margin-bottom: 5px; }
+        p.subtitle { color: #666; font-size: 14px; margin-bottom: 30px; }
+
+        .input-group { position: relative; margin-bottom: 20px; text-align: left; }
+        
+        .input-group input {
+            width: 100%; padding: 14px 14px 14px 45px;
+            border: 2px solid rgba(58, 77, 57, 0.2);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.6);
+            font-size: 14px; transition: 0.3s;
+            outline: none; color: var(--text);
+        }
+
+        .input-group input:focus {
+            background: white; border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(58, 77, 57, 0.1);
+        }
+
+        .input-group i {
+            position: absolute; left: 16px; top: 50%;
+            transform: translateY(-50%); color: #888; transition: 0.3s;
+        }
+        
+        .input-group input:focus + i { color: var(--primary); }
+
+        .toggle-eye { left: auto !important; right: 16px; cursor: pointer; }
+        .toggle-eye:hover { color: var(--accent); }
+
+        /* Button */
+        .btn-login {
+            width: 100%; padding: 14px;
+            background: var(--primary); color: white;
+            border: none; border-radius: 12px;
+            font-weight: 600; cursor: pointer;
+            transition: 0.3s; margin-top: 10px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-login:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(166, 93, 70, 0.3);
+        }
+        .btn-login:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+
+        /* Toast */
+        #toast {
+            visibility: hidden; min-width: 250px;
+            background-color: #333; color: #fff;
+            text-align: center; border-radius: 50px; padding: 12px 24px;
+            position: fixed; z-index: 1000; left: 50%; bottom: 30px;
+            transform: translateX(-50%); font-size: 14px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            opacity: 0; transition: all 0.5s;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+        #toast.success { background: var(--primary); }
+        #toast.error { background: var(--accent); }
+
+        /* Responsif HP */
+        @media (max-width: 480px) {
+            .login-card { width: 90%; padding: 30px 20px; }
+            .blob-1, .blob-2 { width: 300px; height: 300px; } /* Kecilin blob di HP biar gak penuh */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="aurora-blob blob-1"></div>
+    <div class="aurora-blob blob-2"></div>
+    <div class="aurora-blob blob-3"></div>
+
+    <div class="login-card">
+        <div class="logo-badge">
+            <i class="fas fa-feather-alt"></i>
+        </div>
+        <h2>Welcome Back!</h2>
+        <p class="subtitle">Masuk untuk lanjut nulis bareng Writey.</p>
+
+        <form onsubmit="handleLogin(event)">
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Username Kamu" required autocomplete="off">
+                <i class="fas fa-user"></i>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="password" placeholder="Password Rahasia" required>
+                <i class="fas fa-lock"></i>
+                <i class="fas fa-eye toggle-eye" onclick="togglePass()"></i>
+            </div>
+
+            <button type="submit" class="btn-login" id="btnLogin">
+                <span>Masuk Sekarang</span> <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <p style="margin-top: 25px; font-size: 13px; color: #666;">
+            Belum gabung? <a href="register.html" style="color: var(--primary); font-weight: 700; text-decoration: none;">Daftar dulu</a>
+        </p>
+    </div>
+
+    <div id="toast">Notifikasi</div>
+
+    <script>
+        // 0. Auto-Fill Username kalau habis daftar
+        window.onload = function() {
+            const storedUser = localStorage.getItem('storedUser');
+            if(storedUser) {
+                document.getElementById('username').value = storedUser;
+            }
+        }
+
+        // 1. Toggle Password
+        function togglePass() {
+            const input = document.getElementById('password');
+            const icon = document.querySelector('.toggle-eye');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("fa-eye", "fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("fa-eye-slash", "fa-eye");
+            }
+        }
+
+        // 2. Logic Login
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const userInput = document.getElementById('username').value;
+            const passInput = document.getElementById('password').value;
+            const btn = document.getElementById('btnLogin');
+            
+            // Ambil data asli dari register
+            const realUser = localStorage.getItem('storedUser');
+            const realPass = localStorage.getItem('storedPass');
+
+            // Efek Loading
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengecek...';
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+
+            setTimeout(() => {
+                // Skenario 1: Belum Daftar
+                if (!realUser) {
+                    showToast("Akun gak ketemu! Daftar dulu gih.", "error");
+                    resetBtn();
+                    return;
+                }
+
+                // Skenario 2: Password Benar (Atau Login pakai akun demo bebas)
+                // Note: Logikanya 'passInput === realPass' ATAU kalau username sama. 
+                // Biar gampang, kita cek password aja.
+                if (passInput === realPass) {
+                    showToast("Login Sukses! OTW Dashboard...", "success");
+                    
+                    // Simpan sesi login
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('currentUser', userInput); // Simpan nama yg login
+
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    // Skenario 3: Password Salah
+                    showToast("Password salah! Coba inget-inget lagi.", "error");
+                    resetBtn();
+                }
+            }, 1200);
+        }
+
+        function resetBtn() {
+            const btn = document.getElementById('btnLogin');
+            btn.innerHTML = '<span>Masuk Sekarang</span> <i class="fas fa-arrow-right"></i>';
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        }
+
+        function showToast(msg, type) {
+            const toast = document.getElementById("toast");
+            toast.innerText = msg;
+            toast.className = "show " + type;
+            setTimeout(() => toast.className = toast.className.replace("show", ""), 3000);
+        }
+    </script>
+</body>
+</html>

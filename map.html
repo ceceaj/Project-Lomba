@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual HQ - WriteYuk Community</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS KHUSUS VIRTUAL OFFICE */
+        .header-section {
+            background: linear-gradient(135deg, var(--primary), #243533);
+            padding: 40px 30px; border-radius: 20px; color: white;
+            position: relative; overflow: hidden; margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .header-bg-icon {
+            position: absolute; right: -20px; bottom: -30px;
+            font-size: 140px; opacity: 0.1; transform: rotate(-15deg); color: white;
+        }
+
+        .tools-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px; padding-bottom: 50px;
+        }
+
+        /* CARD STYLE */
+        .tool-card {
+            background: var(--bg-card); border-radius: 16px; padding: 25px;
+            border: 1px solid var(--border); position: relative;
+            transition: 0.3s; cursor: pointer; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: space-between;
+            height: 100%;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px); border-color: var(--primary);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+        }
+
+        .tool-icon {
+            width: 50px; height: 50px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; margin-bottom: 20px;
+        }
+
+        .tool-link {
+            margin-top: 20px; padding: 10px; border-radius: 8px;
+            background: var(--bg-body); color: var(--text-muted);
+            font-size: 12px; display: flex; align-items: center; justify-content: space-between;
+            border: 1px solid var(--border);
+        }
+        .copy-btn {
+            background: none; border: none; color: var(--accent);
+            cursor: pointer; font-weight: bold; font-size: 12px;
+        }
+        .copy-btn:hover { text-decoration: underline; }
+
+        /* Badge Kategori */
+        .category-badge {
+            position: absolute; top: 15px; right: 15px;
+            font-size: 10px; padding: 4px 10px; border-radius: 20px;
+            background: rgba(0,0,0,0.05); color: var(--text-muted); font-weight: 600;
+        }
+
+        /* Notifikasi Copy */
+        #copyToast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 10px 20px; border-radius: 30px;
+            font-size: 13px; opacity: 0; pointer-events: none; transition: 0.3s; z-index: 100;
+        }
+        #copyToast.show { opacity: 1; bottom: 50px; }
+    </style>
+</head>
+<body>
+
+     <div class="overlay" onclick="toggleSidebar()"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 30px;">
+            <div style="width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-feather-alt" style="color: var(--primary); font-size: 20px;"></i>
+            </div>
+            <div>
+                <h2 style="margin: 0; font-size: 18px; color: white;">WriteYuk</h2>
+                <p style="margin: 0; font-size: 11px; opacity: 0.7;">Community System</p>
+            </div>
+        </div>
+        <ul>
+            <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="chatbot.html"><i class="fas fa-robot"></i> Tanya Writey</a></li>
+            <li><a href="checklist.html"><i class="fas fa-tasks"></i> Misi Magang</a></li>
+            <li class="active"><a href="map.html"><i class="fas fa-toolbox"></i> Virtual HQ</a></li>
+            <li><a href="structure.html"><i class="fas fa-users"></i> Tim Redaksi</a></li>
+            <li style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                <a href="index.html" style="color: #ffb3b3;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </li>
+        </ul>
+    </nav>
+
+    <main class="main-content" style="padding: 30px;">
+        
+        <div class="header-section">
+            <i class="fas fa-rocket header-bg-icon"></i>
+            <h1 style="margin: 0; font-size: 28px;">Virtual Office 💻</h1>
+            <p style="margin: 8px 0 0 0; opacity: 0.9;">Semua tools dan link penting buat kerja ada di sini.</p>
+        </div>
+
+        <div class="tools-grid">
+            
+            <div class="tool-card">
+                <span class="category-badge">Meeting</span>
+                <div>
+                    <div class="tool-icon" style="background: rgba(45, 140, 255, 0.1); color: #2D8CFF;">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3 style="margin: 0; font-size: 18px; color: var(--text-main);">Zoom Meeting Room</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">
+                        Ruang meeting mingguan & mentoring.
+                    </p>
+                </div>
+                <div class="tool-link">
+                    <span>bit.ly/ZoomWriteYuk</span>
+                    <button class="copy-btn" onclick="copyText('bit.ly/ZoomWriteYuk')">Salin</button>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <span class="category-badge">Assets</span>
+                <div>
+                    <div class="tool-icon" style="background: rgba(255, 187, 0, 0.1); color: #fbbc04;">
+                        <i class="fab fa-google-drive"></i>
+                    </div>
+                    <h3 style="margin: 0; font-size: 18px; color: var(--text-main);">Bank Aset (Drive)</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">
+                        Logo, Template Desain, & SOP PDF.
+                    </p>
+                </div>
+                <div class="tool-link">
+                    <span>drive.google.com/assets</span>
+                    <button class="copy-btn" onclick="copyText('drive.google.com/assets')">Salin</button>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <span class="category-badge">Project</span>
+                <div>
+                    <div class="tool-icon" style="background: rgba(235, 87, 87, 0.1); color: #EB5757;">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3 style="margin: 0; font-size: 18px; color: var(--text-main);">Board Tugas (Notion)</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">
+                        Cek deadline dan status kontenmu.
+                    </p>
+                </div>
+                <div class="tool-link">
+                    <span>notion.so/writeyuk-team</span>
+                    <button class="copy-btn" onclick="copyText('notion.so/writeyuk-team')">Salin</button>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <span class="category-badge">Daily</span>
+                <div>
+                    <div class="tool-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3 style="margin: 0; font-size: 18px; color: var(--text-main);">Form Presensi</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">
+                        Jangan lupa isi sebelum jam 09.00 WIB!
+                    </p>
+                </div>
+                <div class="tool-link">
+                    <span>bit.ly/AbsenMagang</span>
+                    <button class="copy-btn" onclick="copyText('bit.ly/AbsenMagang')">Salin</button>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <span class="category-badge">Community</span>
+                <div>
+                    <div class="tool-icon" style="background: rgba(88, 101, 242, 0.1); color: #5865F2;">
+                        <i class="fab fa-discord"></i>
+                    </div>
+                    <h3 style="margin: 0; font-size: 18px; color: var(--text-main);">Discord Server</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">
+                        Tempat ngobrol santai & main game.
+                    </p>
+                </div>
+                <div class="tool-link">
+                    <span>discord.gg/writeyuk</span>
+                    <button class="copy-btn" onclick="copyText('discord.gg/writeyuk')">Salin</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div id="copyToast"><i class="fas fa-check"></i> Link berhasil disalin!</div>
+
+    <script>
+        // Fitur Copy Link
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = document.getElementById("copyToast");
+                toast.classList.add("show");
+                setTimeout(() => toast.classList.remove("show"), 2000);
+            });
+        }
+
+        // Dark Mode Check
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') document.body.setAttribute('data-theme', 'dark');
+    </script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+/* --- FILE: assets/css/style.css (VERSI FINAL - CLEAN & ESTETIK) --- */
+
+/* 1. IMPORT FONT PREMIUM (Google Fonts) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* 2. DEFINISI VARIABEL WARNA (PALET WRITEYUK) */
+:root {
+    /* --- TEMA TERANG (EARTH TONE) --- */
+    --primary: #4C563F;       /* Olive Green (Warna Utama - Sidebar/Header) */
+    --accent: #964734;        /* Terracotta (Warna Aksen - Tombol/Hover) */
+    --secondary-cream: #878953; /* Creamy Olive (Variasi Aksen) */
+    
+    --bg-body: #F2F4E8;       /* Cream Terang (Background Halaman - BUKAN PUTIH) */
+    --bg-card: #FFFFFF;       /* Putih Bersih (Kartu/Chat Box biar kontras sama cream) */
+    
+    --text-main: #243533;     /* Charcoal Green (Teks Utama - Gak hitam pekat biar lembut) */
+    --text-muted: #687362;    /* Abu Hijau (Teks Keterangan) */
+    
+    --border: #DDE2C6;        /* Garis Cream Hijau (Pemisah) */
+    --shadow: rgba(76, 86, 63, 0.15); /* Bayangan Halus Kehijauan */
+    --glass: rgba(255, 255, 255, 0.8); /* Efek Kaca */
+}
+
+/* --- TEMA GELAP (EARTHY DARK) --- */
+[data-theme="dark"] {
+    --primary: #2C362B;       /* Olive Gelap (Sidebar) */
+    --accent: #B85C46;        /* Terracotta Terang (Biar kebaca di gelap) */
+    
+    --bg-body: #1A2220;       /* Hitam Kehijauan (Background) */
+    --bg-card: #24302C;       /* Abu Hijau Gelap (Kartu) */
+    
+    --text-main: #F2F4E8;     /* Cream Terang (Teks Utama) */
+    --text-muted: #AAB3A3;    /* Abu Cream (Teks Keterangan) */
+    
+    --border: #3A4742;        /* Garis Gelap */
+    --shadow: rgba(0,0,0,0.5); /* Bayangan Tebal */
+    --glass: rgba(36, 48, 44, 0.8); /* Efek Kaca Gelap */
+}
+
+/* 3. RESET & BASE STYLES */
+* {
+    margin: 0; padding: 0; box-sizing: border-box;
+    font-family: 'Poppins', sans-serif; /* Font Modern */
+}
+
+body {
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    transition: background-color 0.4s ease, color 0.4s ease; /* Transisi smooth pas ganti tema */
+    overflow-x: hidden; /* Anti geser samping */
+    min-height: 100vh;
+}
+
+/* BACKGROUND ANIMASI GRADASI (Request No. 1) */
+body::before {
+    content: "";
+    position: fixed;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(76, 86, 63, 0.05) 0%, transparent 60%),
+                radial-gradient(circle, rgba(150, 71, 52, 0.03) 0%, transparent 50%);
+    z-index: -1;
+    animation: bgMove 20s linear infinite;
+}
+
+@keyframes bgMove {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Scrollbar Kustom (Biar cantik) */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-body); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+a { text-decoration: none; color: inherit; transition: 0.3s; }
+ul { list-style: none; }
+img { max-width: 100%; border-radius: 12px; }
+
+/* 4. LAYOUT UTAMA */
+.sidebar {
+    width: 260px;
+    background-color: var(--primary);
+    color: white;
+    display: flex; flex-direction: column;
+    padding: 25px 20px;
+    height: 100vh; position: fixed; left: 0; top: 0;
+    box-shadow: 4px 0 15px var(--shadow);
+    z-index: 100;
+}
+
+.main-content {
+    margin-left: 260px; /* Geser konten ke kanan sidebar */
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    position: relative;
+}
+
+/* Responsif HP (Sidebar Hilang) */
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); transition: 0.3s; }
+    .main-content { margin-left: 0; }
+}
+
+/* 5. KOMPONEN SIDEBAR */
+.sidebar h2 { font-weight: 700; letter-spacing: 0.5px; margin-bottom: 5px; color: white !important; }
+.sidebar p { color: rgba(255,255,255,0.7) !important; font-size: 13px; }
+
+.sidebar ul { margin-top: 30px; display: flex; flex-direction: column; gap: 8px; }
+.sidebar li { border-radius: 12px; transition: all 0.3s ease; }
+.sidebar a {
+    padding: 14px 16px; color: rgba(255,255,255,0.85);
+    display: flex; align-items: center; gap: 14px; font-weight: 500;
+}
+
+/* Efek Hover & Active Sidebar */
+.sidebar li:hover, .sidebar li.active {
+    background: rgba(255,255,255,0.15); /* Putih transparan */
+    transform: translateX(5px); /* Geser dikit biar dinamis */
+}
+.sidebar li:hover a, .sidebar li.active a { color: white; }
+
+/* 6. KOMPONEN KARTU (Card System) */
+.profile-card, .chat-card, .login-card, .org-container, .task-item, .map-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px var(--shadow);
+    color: var(--text-main);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover Efek buat Kartu yang bisa diklik */
+.profile-card:hover, .task-item:hover, .map-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 25px var(--shadow);
+}
+
+/* 7. CHATBOT AREA (PENTING!) */
+.chat-container { height: 100vh; display: flex; flex-direction: column; }
+
+/* Header Chat */
+.chat-header {
+    background: var(--bg-card);
+    padding: 15px 30px;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 2px 10px var(--shadow);
+    z-index: 10;
+}
+
+/* Area Bubble Chat */
+.chat-box {
+    flex: 1; overflow-y: auto; padding: 25px;
+    display: flex; flex-direction: column; gap: 18px;
+    background-image: radial-gradient(var(--border) 1px, transparent 1px); /* Pola titik halus */
+    background-size: 20px 20px;
+}
+
+/* Desain Bubble */
+.message {
+    max-width: 75%; padding: 14px 20px; border-radius: 18px;
+    font-size: 15px; line-height: 1.6; position: relative;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.message.bot {
+    align-self: flex-start;
+    background: var(--bg-card); color: var(--text-main);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px; /* Sudut lancip */
+}
+
+.message.user {
+    align-self: flex-end;
+    background: var(--primary); color: white;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 4px 10px var(--shadow);
+}
+
+/* Kartu di dalam Chat (Gambar/PDF) */
+.chat-card {
+    margin-top: 10px; padding: 12px; max-width: 100%;
+    background: rgba(255,255,255,0.95);
+    border-radius: 12px;
+}
+[data-theme="dark"] .chat-card { background: var(--bg-card); } /* Fix background putih di dark mode */
+
+/* 8. FORM ELEMENTS (Input & Button) */
+input, textarea, select, .form-control {
+    background-color: var(--bg-card) !important;
+    color: var(--text-main) !important;
+    border: 2px solid var(--border) !important;
+    padding: 12px 16px; border-radius: 12px; font-size: 15px;
+    transition: 0.3s; outline: none; width: 100%;
+}
+
+input:focus, textarea:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(76, 86, 63, 0.15); /* Efek glow hijau */
+}
+
+/* Tombol Utama */
+.btn-login, .btn-send, .btn-download, button:not(.toggle-btn) {
+    background: var(--primary); color: white;
+    border: none; border-radius: 12px;
+    padding: 12px 24px; font-weight: 600; cursor: pointer;
+    transition: 0.3s; box-shadow: 0 4px 10px var(--shadow);
+}
+
+.btn-login:hover, .btn-send:hover, .btn-download:hover, button:not(.toggle-btn):hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px var(--shadow);
+}
+
+/* 9. TOMBOL GANTI TEMA */
+.toggle-btn {
+    background: rgba(150, 71, 52, 0.1); color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 8px 16px; border-radius: 20px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 8px; transition: 0.3s;
+}
+
+.toggle-btn:hover {
+    background: var(--accent); color: white;
+}
+
+/* 10. HELPER CLASSES & ANIMASI */
+.text-muted { color: var(--text-muted) !important; }
+
+/* Animasi Pop-up */
+@keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Fix Video & Audio Player */
+video, audio {
+    width: 100%; border-radius: 12px; margin-top: 5px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* --- TAMBAHAN DI style.css: TYPING INDICATOR ANIMATION --- */
+.typing-indicator {
+    display: flex; gap: 5px; padding: 10px 15px;
+    background: var(--bg-card); border-radius: 20px;
+    border-bottom-left-radius: 4px; border: 1px solid var(--border);
+    width: fit-content; margin-bottom: 10px;
+    align-self: flex-start;
+}
+.typing-dot {
+    width: 8px; height: 8px; background: var(--text-muted);
+    border-radius: 50%;
+    animation: typingBounce 1.4s infinite ease-in-out both;
+}
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingBounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+}
