@@ -8,143 +8,121 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* CSS KHUSUS STRUKTUR ORGANISASI */
+        /* FIX SCROLL */
         html, body { overflow-y: auto !important; height: auto !important; min-height: 100vh; }
 
+        /* HEADER */
         .header-section {
             background: linear-gradient(135deg, var(--primary), #243533);
             padding: 40px 30px 60px 30px; 
             border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
             color: white; position: relative; overflow: hidden; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15); margin-bottom: 40px;
         }
         .header-bg-icon {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             font-size: 200px; opacity: 0.05; color: white; pointer-events: none;
         }
 
-        /* CONTAINER POHON STRUKTUR */
-        .org-tree {
-            display: flex; flex-direction: column; align-items: center; gap: 40px;
-            padding-bottom: 80px; position: relative;
+        /* CONTAINER UTAMA */
+        .org-container {
+            max-width: 1200px; margin: 0 auto; padding-bottom: 80px;
+            display: flex; flex-direction: column; gap: 50px; align-items: center;
         }
 
-        /* LEVEL (BARIS) */
-        .level {
-            display: flex; justify-content: center; gap: 40px; position: relative; z-index: 2;
+        /* JUDUL SECTION */
+        .section-title {
+            font-size: 18px; font-weight: 700; color: var(--text-main);
+            margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;
+            text-align: left; width: 100%; border-left: 5px solid var(--accent);
+            padding-left: 15px; margin-left: 20px;
         }
 
-        /* CARD STYLE (GLASSMORPHISM) */
-        .profile-card {
-            background: var(--bg-card); width: 240px; padding: 30px 20px;
-            border-radius: 20px; border: 1px solid var(--border);
-            text-align: center; position: relative; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
+        /* --- TIPE 1: LEADER CARD (HORIZONTAL / LANDSCAPE) --- */
+        /* Dipakai buat Founder, Director, Head. Foto Kiri, Teks Kanan */
+        .leaders-grid {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; width: 100%;
+            padding: 0 20px;
+        }
+
+        .leader-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 20px; padding: 20px;
+            display: flex; align-items: center; gap: 20px; /* Jarak foto ke teks */
+            width: 100%; max-width: 380px; /* Ukuran kartu lebar */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: 0.3s; cursor: pointer; position: relative; overflow: hidden;
+        }
+        .leader-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+        .leader-img-box {
+            width: 80px; height: 80px; flex-shrink: 0; position: relative;
+        }
+        .leader-img {
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+            border: 3px solid var(--bg-body); background: #f0f0f0;
         }
         
-        .profile-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            box-shadow: 0 20px 40px rgba(58, 77, 57, 0.15);
+        .leader-info { flex: 1; text-align: left; }
+        .leader-info h3 { margin: 0; font-size: 16px; color: var(--text-main); font-weight: 700; }
+        .leader-info p { margin: 5px 0 0 0; font-size: 12px; color: var(--text-muted); }
+        .leader-badge {
+            display: inline-block; font-size: 10px; padding: 4px 10px;
+            border-radius: 12px; background: rgba(58, 77, 57, 0.1); 
+            color: var(--primary); font-weight: 700; margin-bottom: 5px;
         }
 
-        /* FOTO PROFIL */
-        .img-wrapper {
-            width: 100px; height: 100px; margin: 0 auto 15px auto;
-            position: relative;
-        }
-        .profile-img {
-            width: 100%; height: 100%; border-radius: 50%;
-            object-fit: cover; border: 4px solid var(--bg-body);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: 0.3s;
-            background: #f0f0f0; /* Placeholder warna abu */
-        }
-        .status-badge {
-            position: absolute; bottom: 5px; right: 5px;
-            width: 18px; height: 18px; background: #10b981;
-            border: 3px solid var(--bg-card); border-radius: 50%;
+        /* Icon Email Kecil di Pojok */
+        .mail-icon {
+            position: absolute; bottom: 15px; right: 15px;
+            color: var(--text-muted); opacity: 0.5; font-size: 14px;
         }
 
-        /* TEXT STYLE */
-        .role-badge {
-            background: rgba(58, 77, 57, 0.1); color: var(--primary);
-            padding: 6px 14px; border-radius: 20px;
-            font-size: 11px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 1px; display: inline-block; margin-bottom: 12px;
-        }
-        h3 { font-size: 18px; margin: 5px 0; color: var(--text-main); }
-        p { font-size: 13px; color: var(--text-muted); margin: 0; }
-        
-        /* TOMBOL SOSMED KECIL */
-        .social-links {
-            margin-top: 15px; display: flex; justify-content: center; gap: 10px;
-            opacity: 0; transform: translateY(10px); transition: 0.3s;
-        }
-        .profile-card:hover .social-links { opacity: 1; transform: translateY(0); }
-        
-        .social-btn {
-            width: 30px; height: 30px; border-radius: 50%;
-            background: var(--bg-body); color: var(--text-muted);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px; transition: 0.3s; border: 1px solid var(--border);
-        }
-        .social-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
-
-        /* --- GARIS PENGHUBUNG (CSS MAGIC) --- */
-        /* Garis Vertikal (Atas Card) */
-        .level:not(:first-child) .profile-card::before {
-            content: ''; position: absolute; top: -40px; left: 50%;
-            width: 2px; height: 40px; background: var(--border);
-            transform: translateX(-50%); z-index: -1;
+        /* --- TIPE 2: INTERN CARD (VERTICAL / PORTRAIT) --- */
+        /* Dipakai buat Intern. Foto Atas, Teks Bawah. Grid Rapat */
+        .interns-grid {
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Responsif Grid */
+            gap: 15px; width: 100%; padding: 0 20px;
         }
 
-        /* Garis Horizontal (Penghubung Antar Card) */
-        .connector-bar {
-            position: absolute; top: -40px; left: 0; right: 0;
-            height: 2px; background: var(--border);
-            width: calc(100% - 240px); /* Kurangi lebar 1 card biar pas di tengah */
-            margin: 0 auto; z-index: -1;
+        .intern-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 20px 15px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03); transition: 0.3s;
         }
-        
-        /* Garis Turun dari Level Atas */
-        .level:not(:last-child) .profile-card::after {
-            content: ''; position: absolute; bottom: -40px; left: 50%;
-            width: 2px; height: 40px; background: var(--border);
-            transform: translateX(-50%); z-index: -1;
+        .intern-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+
+        .intern-img-box { width: 65px; height: 65px; margin-bottom: 12px; position: relative; }
+        .intern-img {
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+            border: 3px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,0.1); background: #eee;
         }
 
-        /* Hapus garis bawah di level terakhir */
-        .level:last-child .profile-card::after { display: none; }
+        .intern-info h3 { margin: 0; font-size: 14px; color: var(--text-main); font-weight: 600; }
+        .intern-info p { margin: 4px 0 0 0; font-size: 11px; color: var(--text-muted); }
+        .intern-badge {
+            font-size: 9px; background: #f3f4f6; color: #6b7280;
+            padding: 2px 8px; border-radius: 10px; margin-bottom: 8px; display: inline-block;
+        }
 
+        /* Status Dot */
+        .online-dot {
+            width: 12px; height: 12px; background: #10b981; border: 2px solid white;
+            border-radius: 50%; position: absolute; bottom: 0; right: 0;
+        }
 
-        /* --- RESPONSIF HP (UBAH JADI GRID LIST) --- */
-        @media (max-width: 900px) {
+        /* Responsif HP */
+        @media (max-width: 768px) {
             .sidebar { display: none; }
             .main-content { margin-left: 0; }
             .header-section { padding: 30px 20px; margin-bottom: 30px; }
             
-            /* Ubah Struktur Pohon jadi Grid Biasa */
-            .org-tree { gap: 20px; padding-bottom: 40px; }
-            .level {
-                flex-direction: column; /* Susun ke bawah */
-                gap: 20px; width: 100%; align-items: center;
-            }
-            .level:not(:first-child) { margin-top: 0; }
-
-            /* Sembunyikan Garis-garis Ribet */
-            .profile-card::before, .profile-card::after, .connector-bar {
-                display: none !important; 
-            }
-
-            .profile-card { width: 90%; max-width: 350px; display: flex; align-items: center; text-align: left; padding: 20px; gap: 20px; }
-            .img-wrapper { margin: 0; width: 70px; height: 70px; flex-shrink: 0; }
-            .social-links { opacity: 1; transform: translateY(0); justify-content: flex-start; margin-top: 10px; }
+            .leader-card { max-width: 100%; } /* Kartu Leader jadi full width di HP */
+            .interns-grid { grid-template-columns: repeat(2, 1fr); } /* Intern jadi 2 kolom */
             
-            /* Back Button */
             .back-btn { display: block !important; margin-bottom: 15px; color: white; text-decoration: none; font-size: 18px; }
         }
     </style>
@@ -180,94 +158,197 @@
             
             <i class="fas fa-users header-bg-icon"></i>
             <h1 style="margin: 0; font-size: 28px; position: relative; z-index: 2;">Meet The Team 🚀</h1>
-            <p style="margin: 8px 0 0 0; opacity: 0.9; position: relative; z-index: 2; color: white;">Orang-orang hebat di balik Divisi Creative WriteYuk.</p>
+            <p style="margin: 8px 0 0 0; opacity: 0.9; position: relative; z-index: 2;">Orang-orang hebat di balik WriteYuk Community.</p>
         </div>
 
-        <div class="org-tree">
+        <div class="org-container">
             
-            <div class="level">
-                <div class="profile-card">
-                    <div class="img-wrapper">
-                        <img src="https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671142.jpg" class="profile-img">
-                        <div class="status-dot status-badge"></div>
+            <div style="width: 100%;">
+                <div class="section-title">Our Founders</div>
+                <div class="leaders-grid">
+                    <div class="leader-card">
+                        <div class="leader-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-pink-hair_23-2149436186.jpg" class="leader-img">
+                        </div>
+                        <div class="leader-info">
+                            <span class="leader-badge">FOUNDER</span>
+                            <h3>Amaliya Putri</h3>
+                            <p>Visionary Leader</p>
+                        </div>
+                        <i class="fas fa-envelope mail-icon"></i>
                     </div>
-                    <span class="role-badge">Head of Creative</span>
-                    <h3>Pak Cece Aditya</h3>
-                    <p>"Work hard, Play hard."</p>
-                    
-                    <div class="social-links">
-                        <a href="#" class="social-btn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-btn"><i class="fas fa-envelope"></i></a>
+
+                    <div class="leader-card">
+                        <div class="leader-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg" class="leader-img">
+                        </div>
+                        <div class="leader-info">
+                            <span class="leader-badge">FOUNDER</span>
+                            <h3>Atilla Radja Satria</h3>
+                            <p>Strategic Planner</p>
+                        </div>
+                        <i class="fas fa-envelope mail-icon"></i>
+                    </div>
+
+                    <div class="leader-card">
+                        <div class="leader-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671142.jpg" class="leader-img">
+                        </div>
+                        <div class="leader-info">
+                            <span class="leader-badge">FOUNDER</span>
+                            <h3>Louise Shania S.</h3>
+                            <p>Community Builder</p>
+                        </div>
+                        <i class="fas fa-envelope mail-icon"></i>
+                    </div>
+
+                    <div class="leader-card">
+                        <div class="leader-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-glasses_23-2149436190.jpg" class="leader-img">
+                        </div>
+                        <div class="leader-info">
+                            <span class="leader-badge">FOUNDER</span>
+                            <h3>Sabina</h3>
+                            <p>Creative Mind</p>
+                        </div>
+                        <i class="fas fa-envelope mail-icon"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="level">
-                <div class="connector-bar"></div>
-                
-                <div class="profile-card">
-                    <div class="img-wrapper">
-                        <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg" class="profile-img">
-                        <div class="status-dot status-badge"></div>
+            <div style="width: 100%;">
+                <div class="section-title">Director & Graphic Design Leaders</div>
+                <div class="leaders-grid">
+                    
+                    <div class="leader-card" style="border-left: 4px solid var(--accent);">
+                        <div class="leader-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-long-hair_23-2149436197.jpg" class="leader-img">
+                            <div class="online-dot"></div>
+                        </div>
+                        <div class="leader-info">
+                            <span class="leader-badge" style="background: rgba(166, 93, 70, 0.1); color: var(--accent);">DIRECTOR & VICE DIR</span>
+                            <h3>Esty Nazella</h3>
+                            <p>Operations & Leadership</p>
+                        </div>
                     </div>
-                    <span class="role-badge" style="background: rgba(166, 93, 70, 0.1); color: var(--accent);">Senior Designer</span>
-                    <h3>Kak Adit</h3>
-                    <p>Mentor Design</p>
 
-                    <div class="social-links">
-                        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-btn"><i class="fas fa-envelope"></i></a>
+                    <div class="leader-card">
+                        <div class="leader-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-rainbow-hair_23-2149436196.jpg" class="leader-img">
+                        </div>
+                        <div class="leader-info">
+                            <span class="leader-badge" style="color: #0ea5e9; background: #e0f2fe;">HEAD OF GRAPHIC DESIGN</span>
+                            <h3>Aufrasia Marchyanda</h3>
+                            <p>Creative Director</p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="profile-card">
-                    <div class="img-wrapper">
-                        <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-punk-hair-style_23-2149436198.jpg" class="profile-img">
-                        <div class="status-dot status-badge"></div>
+                    <div class="leader-card">
+                        <div class="leader-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-punk-hair-style_23-2149436198.jpg" class="leader-img">
+                        </div>
+                        <div class="leader-info">
+                            <span class="leader-badge" style="color: #64748b; background: #f1f5f9;">VICE HEAD OF GD</span>
+                            <h3>Fakhrul Hafizhuddin</h3>
+                            <p>Design Supervisor</p>
+                        </div>
                     </div>
-                    <span class="role-badge" style="background: rgba(234, 179, 8, 0.1); color: #ca8a04;">Video Lead</span>
-                    <h3>Kak Ditya</h3>
-                    <p>Mentor Videography</p>
 
-                    <div class="social-links">
-                        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-btn"><i class="fas fa-envelope"></i></a>
-                    </div>
                 </div>
             </div>
 
-            <div class="level">
-                <div class="connector-bar"></div>
-                
-                <div class="profile-card" style="border-color: var(--accent); box-shadow: 0 0 0 4px rgba(166, 93, 70, 0.1);">
-                    <div class="img-wrapper">
-                        <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-pink-hair_23-2149436186.jpg" class="profile-img">
-                        <div class="status-dot status-badge" style="background: #3b82f6;"></div>
-                    </div>
-                    <span class="role-badge" style="background: #f1f5f9; color: #64748b;">Intern</span>
-                    <h3>Khanza Ramadini</h3>
-                    <p>Graphic Design Intern</p>
+            <div style="width: 100%;">
+                <div class="section-title">Interns - Graphic Design Division</div>
+                <div class="interns-grid">
                     
-                    <div class="social-links">
-                        <a href="#" class="social-btn"><i class="fab fa-github"></i></a>
-                        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+                    <div class="intern-card">
+                        <div class="intern-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-pink-hair_23-2149436186.jpg" class="intern-img">
+                        </div>
+                        <div class="intern-info">
+                            <span class="intern-badge">INTERN</span>
+                            <h3>Syifa Ayudya N.</h3>
+                            <p>Junior Designer</p>
+                        </div>
                     </div>
-                </div>
 
-                <div class="profile-card">
-                    <div class="img-wrapper">
-                        <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-glasses_23-2149436190.jpg" class="profile-img">
-                        <div class="status-dot status-badge" style="background: #3b82f6;"></div>
+                    <div class="intern-card">
+                        <div class="intern-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-glasses_23-2149436190.jpg" class="intern-img">
+                        </div>
+                        <div class="intern-info">
+                            <span class="intern-badge">INTERN</span>
+                            <h3>Aisha Shafanyda</h3>
+                            <p>Junior Designer</p>
+                        </div>
                     </div>
-                    <span class="role-badge" style="background: #f1f5f9; color: #64748b;">Intern</span>
-                    <h3>Cece Ajaaa</h3>
-                    <p>Junior Programmer</p>
 
-                    <div class="social-links">
-                        <a href="#" class="social-btn"><i class="fab fa-dribbble"></i></a>
-                        <a href="#" class="social-btn"><i class="fab fa-instagram"></i></a>
+                    <div class="intern-card">
+                        <div class="intern-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-long-hair_23-2149436197.jpg" class="intern-img">
+                        </div>
+                        <div class="intern-info">
+                            <span class="intern-badge">INTERN</span>
+                            <h3>Hildatul Hafizah</h3>
+                            <p>Junior Designer</p>
+                        </div>
                     </div>
+
+                    <div class="intern-card">
+                        <div class="intern-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-human-avatar-profile_23-2150671142.jpg" class="intern-img">
+                        </div>
+                        <div class="intern-info">
+                            <span class="intern-badge">INTERN</span>
+                            <h3>Maulidiya</h3>
+                            <p>Junior Designer</p>
+                        </div>
+                    </div>
+
+                    <div class="intern-card">
+                        <div class="intern-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg" class="intern-img">
+                        </div>
+                        <div class="intern-info">
+                            <span class="intern-badge">INTERN</span>
+                            <h3>M. Fauzan</h3>
+                            <p>Junior Designer</p>
+                        </div>
+                    </div>
+
+                    <div class="intern-card">
+                        <div class="intern-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-rainbow-hair_23-2149436196.jpg" class="intern-img">
+                        </div>
+                        <div class="intern-info">
+                            <span class="intern-badge">INTERN</span>
+                            <h3>Kholifah Nur Aeni</h3>
+                            <p>Junior Designer</p>
+                        </div>
+                    </div>
+
+                    <div class="intern-card">
+                        <div class="intern-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-glasses_23-2149436190.jpg" class="intern-img">
+                        </div>
+                        <div class="intern-info">
+                            <span class="intern-badge">INTERN</span>
+                            <h3>Mutia Rizki H.</h3>
+                            <p>Junior Designer</p>
+                        </div>
+                    </div>
+
+                    <div class="intern-card">
+                        <div class="intern-img-box">
+                            <img src="https://img.freepik.com/free-psd/3d-illustration-person-with-pink-hair_23-2149436186.jpg" class="intern-img">
+                        </div>
+                        <div class="intern-info">
+                            <span class="intern-badge">INTERN</span>
+                            <h3>Nazwadilla Balqis</h3>
+                            <p>Junior Designer</p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
