@@ -14,7 +14,7 @@
 
         .header-section {
             background: linear-gradient(135deg, var(--primary), #243533);
-            padding: 40px 30px 80px 30px; /* Padding bawah gede buat naruh kartu progress */
+            padding: 40px 30px 80px 30px;
             border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
             color: white; position: relative; overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
@@ -40,7 +40,6 @@
             border-radius: 20px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative; overflow: hidden;
         }
-        /* Efek Shimmer/Kilau di Progress Bar */
         .progress-bar-fill::after {
             content: ''; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
@@ -58,7 +57,6 @@
             border-color: var(--primary); box-shadow: 0 5px 15px rgba(58, 77, 57, 0.1);
         }
 
-        /* Header Folder (Yang diklik) */
         .folder-header {
             padding: 18px 20px; cursor: pointer;
             display: flex; justify-content: space-between; align-items: center;
@@ -78,7 +76,6 @@
         .chevron { transition: 0.3s; color: var(--text-muted); }
         .month-folder.active .chevron { transform: rotate(180deg); color: var(--primary); }
 
-        /* Isi Folder (List Tugas) */
         .folder-content {
             max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out;
             background: var(--bg-body);
@@ -107,7 +104,7 @@
         .custom-checkbox i { color: white; font-size: 12px; opacity: 0; transform: scale(0.5); transition: 0.2s; }
         .task-item.completed .custom-checkbox i { opacity: 1; transform: scale(1); }
 
-        .task-text { font-size: 14px; color: var(--text-main); flex: 1; transition: 0.3s; }
+        .task-text { font-size: 14px; color: var(--text-main); flex: 1; transition: 0.3s; line-height: 1.4; }
         .task-item.completed .task-text {
             text-decoration: line-through; color: var(--text-muted);
         }
@@ -115,6 +112,7 @@
         .xp-badge {
             font-size: 11px; font-weight: 700; color: var(--accent);
             background: rgba(166, 93, 70, 0.1); padding: 4px 8px; border-radius: 10px;
+            white-space: nowrap;
         }
 
         /* Responsif Mobile */
@@ -124,8 +122,6 @@
             .header-section { padding: 30px 20px 70px 20px; }
             .progress-card { margin: -40px 15px 25px 15px; }
             .month-folder { margin: 0 15px 10px 15px; }
-            
-            /* Tombol Back di Header */
             .back-btn { display: block !important; margin-bottom: 15px; color: white; text-decoration: none; font-size: 18px; }
         }
     </style>
@@ -179,31 +175,38 @@
         </div>
 
         <div id="folderContainer">
+            
             <div class="month-folder active">
                 <div class="folder-header" onclick="toggleFolder(this)">
                     <div class="folder-title">
                         <div class="folder-icon"><i class="fas fa-rocket"></i></div>
                         <div>
-                            <span>Bulan 1: Onboarding</span>
-                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Pengenalan Budaya & SOP</div>
+                            <span>BULAN 1: THE FOUNDATION</span>
+                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Adaptasi & Branding</div>
                         </div>
                     </div>
                     <i class="fas fa-chevron-down chevron"></i>
                 </div>
-                <div class="folder-content" style="max-height: 500px;"> <div class="task-item" onclick="toggleTask(this, 'm1_task1')">
+                <div class="folder-content" style="max-height: 500px;">
+                    <div class="task-item" onclick="toggleTask(this, 'm1_task1')">
                         <div class="custom-checkbox"><i class="fas fa-check"></i></div>
-                        <div class="task-text">Join Grup WhatsApp & Kenalan</div>
+                        <div class="task-text"><b>Minggu 1: Onboarding.</b> Lengkapi User Data & Pelajari SOP File (YYYYMMDD).</div>
                         <span class="xp-badge">+20 XP</span>
                     </div>
                     <div class="task-item" onclick="toggleTask(this, 'm1_task2')">
                         <div class="custom-checkbox"><i class="fas fa-check"></i></div>
-                        <div class="task-text">Baca & Pahami Brand Guidelines</div>
-                        <span class="xp-badge">+30 XP</span>
+                        <div class="task-text"><b>Minggu 2: Brand Guidelines.</b> Pahami penulisan Write Yuk & PUEBI.</div>
+                        <span class="xp-badge">+20 XP</span>
                     </div>
                     <div class="task-item" onclick="toggleTask(this, 'm1_task3')">
                         <div class="custom-checkbox"><i class="fas fa-check"></i></div>
-                        <div class="task-text">Setup Akun Trello/Notion Tim</div>
-                        <span class="xp-badge">+20 XP</span>
+                        <div class="task-text"><b>Minggu 3: Trial Run.</b> Eksplorasi G-Drive & Pre-Concept Preparation.</div>
+                        <span class="xp-badge">+30 XP</span>
+                    </div>
+                    <div class="task-item" onclick="toggleTask(this, 'm1_task4')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text"><b>Minggu 4: First Execution.</b> Drafting desain, Review Head, & Laporan Akhir.</div>
+                        <span class="xp-badge">+50 XP</span>
                     </div>
                 </div>
             </div>
@@ -213,8 +216,8 @@
                     <div class="folder-title">
                         <div class="folder-icon"><i class="fas fa-pen-nib"></i></div>
                         <div>
-                            <span>Bulan 2: Content Creation</span>
-                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Mulai Nulis Artikel & Copy</div>
+                            <span>BULAN 2: PRODUCTION MODE</span>
+                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Content Specialist</div>
                         </div>
                     </div>
                     <i class="fas fa-chevron-down chevron"></i>
@@ -222,13 +225,28 @@
                 <div class="folder-content">
                     <div class="task-item" onclick="toggleTask(this, 'm2_task1')">
                         <div class="custom-checkbox"><i class="fas fa-check"></i></div>
-                        <div class="task-text">Submit 2 Artikel SEO Friendly</div>
-                        <span class="xp-badge">+50 XP</span>
+                        <div class="task-text">Produksi min. 4 Konten Edukasi (CatatYuk, KetahuiYuk, dll).</div>
+                        <span class="xp-badge">+40 XP</span>
                     </div>
                     <div class="task-item" onclick="toggleTask(this, 'm2_task2')">
                         <div class="custom-checkbox"><i class="fas fa-check"></i></div>
-                        <div class="task-text">Buat Caption Instagram (1 Minggu)</div>
+                        <div class="task-text">Live Project: Desain Eksternal (Oprec/Event).</div>
                         <span class="xp-badge">+40 XP</span>
+                    </div>
+                    <div class="task-item" onclick="toggleTask(this, 'm2_task3')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Workflow Mastery: Serahkan Link Canva (Access: Anyone can edit).</div>
+                        <span class="xp-badge">+30 XP</span>
+                    </div>
+                    <div class="task-item" onclick="toggleTask(this, 'm2_task4')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Presence 100%: Weekly & Internal GD Meeting.</div>
+                        <span class="xp-badge">+30 XP</span>
+                    </div>
+                    <div class="task-item" onclick="toggleTask(this, 'm2_task5')">
+                        <div class="custom-checkbox"><i class="fas fa-check"></i></div>
+                        <div class="task-text">Reporting: Laporan Akhir Bulan 2.</div>
+                        <span class="xp-badge">+50 XP</span>
                     </div>
                 </div>
             </div>
@@ -236,10 +254,10 @@
             <div class="month-folder">
                 <div class="folder-header" onclick="toggleFolder(this)">
                     <div class="folder-title">
-                        <div class="folder-icon"><i class="fas fa-bullhorn"></i></div>
+                        <div class="folder-icon"><i class="fas fa-laptop-code"></i></div>
                         <div>
-                            <span>Bulan 3: Campaign & Ads</span>
-                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Belajar Marketing Dasar</div>
+                            <span>BULAN 3: TECHNICAL RESPONSIBILITY</span>
+                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Webinar & Database</div>
                         </div>
                     </div>
                     <i class="fas fa-chevron-down chevron"></i>
@@ -247,58 +265,28 @@
                 <div class="folder-content">
                     <div class="task-item" onclick="toggleTask(this, 'm3_task1')">
                         <div class="custom-checkbox"><i class="fas fa-check"></i></div>
-                        <div class="task-text">Analisis Kompetitor (SWOT)</div>
+                        <div class="task-text">Zoom Operator: Bertugas minimal 1x (Paham izin H-3).</div>
                         <span class="xp-badge">+50 XP</span>
                     </div>
                     <div class="task-item" onclick="toggleTask(this, 'm3_task2')">
                         <div class="custom-checkbox"><i class="fas fa-check"></i></div>
-                        <div class="task-text">Ideasi Campaign Ramadhan</div>
-                        <span class="xp-badge">+60 XP</span>
+                        <div class="task-text">Admin Hari Besar: Data untuk kalender konten bulan depan.</div>
+                        <span class="xp-badge">+30 XP</span>
                     </div>
-                </div>
-            </div>
-
-            <div class="month-folder">
-                <div class="folder-header" onclick="toggleFolder(this)">
-                    <div class="folder-title">
-                        <div class="folder-icon"><i class="fas fa-chart-line"></i></div>
-                        <div>
-                            <span>Bulan 4: Evaluation</span>
-                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Review Performa Konten</div>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-down chevron"></i>
-                </div>
-                <div class="folder-content">
-                    <div class="task-item" onclick="toggleTask(this, 'm4_task1')">
+                    <div class="task-item" onclick="toggleTask(this, 'm3_task3')">
                         <div class="custom-checkbox"><i class="fas fa-check"></i></div>
-                        <div class="task-text">Presentasi Hasil Insight Bulanan</div>
-                        <span class="xp-badge">+80 XP</span>
+                        <div class="task-text">Skill Up: Eksperimen layouting menggunakan Figma.</div>
+                        <span class="xp-badge">+40 XP</span>
                     </div>
-                </div>
-            </div>
-            
-             <div class="month-folder">
-                <div class="folder-header" onclick="toggleFolder(this)">
-                    <div class="folder-title">
-                        <div class="folder-icon"><i class="fas fa-graduation-cap"></i></div>
-                        <div>
-                            <span>Bulan 5: Final Project</span>
-                            <div style="font-size: 11px; color: var(--text-muted); font-weight: 400;">Sidang Akhir & Perpisahan</div>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-down chevron"></i>
-                </div>
-                <div class="folder-content">
-                    <div class="task-item" onclick="toggleTask(this, 'm5_task1')">
+                    <div class="task-item" onclick="toggleTask(this, 'm3_task4')">
                         <div class="custom-checkbox"><i class="fas fa-check"></i></div>
-                        <div class="task-text">Submit Laporan Magang Final</div>
-                        <span class="xp-badge">+100 XP</span>
+                        <div class="task-text">File Audit: Pastikan karya bln 1-2 terarsip rapi di Drive.</div>
+                        <span class="xp-badge">+30 XP</span>
                     </div>
-                    <div class="task-item" onclick="toggleTask(this, 'm5_task2')">
+                    <div class="task-item" onclick="toggleTask(this, 'm3_task5')">
                         <div class="custom-checkbox"><i class="fas fa-check"></i></div>
-                        <div class="task-text">Farewell Party bareng Tim</div>
-                        <span class="xp-badge">+10 XP</span>
+                        <div class="task-text">Reporting: Laporan Akhir Bulan 3.</div>
+                        <span class="xp-badge">+50 XP</span>
                     </div>
                 </div>
             </div>
@@ -309,19 +297,11 @@
     </main>
 
     <script>
-        // 1. Logic Accordion (Buka Tutup Folder)
+        // 1. Logic Accordion
         function toggleFolder(header) {
             const folder = header.parentElement;
             const content = folder.querySelector('.folder-content');
             
-            // Tutup folder lain biar rapi (Optional, kalau mau satu aja yg kebuka)
-            // document.querySelectorAll('.month-folder').forEach(f => {
-            //     if(f !== folder) {
-            //         f.classList.remove('active');
-            //         f.querySelector('.folder-content').style.maxHeight = null;
-            //     }
-            // });
-
             folder.classList.toggle('active');
             
             if (folder.classList.contains('active')) {
@@ -331,46 +311,38 @@
             }
         }
 
-        // 2. Logic Centang Tugas & Simpan ke LocalStorage
+        // 2. Logic Centang Tugas
         function toggleTask(element, taskId) {
-            // Cek status sekarang
             const isCompleted = element.classList.contains('completed');
             
             if (!isCompleted) {
-                // Tandai Selesai
                 element.classList.add('completed');
                 localStorage.setItem(taskId, 'true');
             } else {
-                // Hapus Tanda Selesai
                 element.classList.remove('completed');
                 localStorage.removeItem(taskId);
             }
-            
-            updateGlobalProgress(); // Hitung ulang persen
+            updateGlobalProgress();
         }
 
-        // 3. Load Data saat Halaman Dibuka
+        // 3. Load Data & Hitung Otomatis
         document.addEventListener("DOMContentLoaded", () => {
-            // Load status checkbox
             const allTasks = document.querySelectorAll('.task-item');
+            
             allTasks.forEach(task => {
-                // Ambil ID task dari atribut onclick (agak hacky tapi simpel)
-                const taskId = task.getAttribute('onclick').match(/'([^']+)'/)[1];
-                
-                if (localStorage.getItem(taskId) === 'true') {
-                    task.classList.add('completed');
+                const onclickAttr = task.getAttribute('onclick');
+                if(onclickAttr) {
+                    const taskId = onclickAttr.match(/'([^']+)'/)[1];
+                    if (localStorage.getItem(taskId) === 'true') {
+                        task.classList.add('completed');
+                    }
                 }
             });
 
             updateGlobalProgress();
-            
-            // Set folder pertama kebuka otomatis (biar gak sepi)
-            // const firstFolder = document.querySelector('.month-folder');
-            // const firstContent = firstFolder.querySelector('.folder-content');
-            // firstContent.style.maxHeight = firstContent.scrollHeight + "px";
         });
 
-        // 4. Hitung Total Progress (Semua Bulan)
+        // 4. Hitung Total Progress Dinamis
         function updateGlobalProgress() {
             const allTasks = document.querySelectorAll('.task-item');
             const completedTasks = document.querySelectorAll('.task-item.completed');
@@ -380,24 +352,22 @@
             
             const percent = total === 0 ? 0 : Math.round((checked / total) * 100);
 
-            // Update UI
             document.getElementById('progressBar').style.width = percent + "%";
             document.getElementById('progressText').innerText = percent + "%";
 
-            // Update Teks Motivasi
             const title = document.getElementById('statusTitle');
             if (percent === 0) title.innerText = "Ayo Mulai! 💪";
             else if (percent < 30) title.innerText = "Good Start! 🔥";
             else if (percent < 70) title.innerText = "Keep Going! 🚀";
-            else if (percent < 100) title.innerText = "Dikit Lagi Lulus! 🎓";
+            else if (percent < 100) title.innerText = "Dikit Lagi! 🎓";
             else {
-                title.innerText = "LULUS MAGANG! 🎉";
-                document.getElementById('progressBar').style.background = "#10b981"; // Hijau
+                title.innerText = "MISSION COMPLETE! 🎉";
+                document.getElementById('progressBar').style.background = "#10b981";
                 triggerConfetti();
             }
         }
 
-        // 5. Efek Confetti (Hore-hore)
+        // 5. Confetti
         function triggerConfetti() {
             var duration = 3 * 1000;
             var animationEnd = Date.now() + duration;
